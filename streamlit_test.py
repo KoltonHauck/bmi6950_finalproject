@@ -60,7 +60,7 @@ if prompt := st.chat_input("What is up?"):
         if not openai_api_key.startswith('sk-'):
             st.warning('Please enter your OpenAI API key!', icon='⚠')
 
-        stream = get_client()(
+        stream = get_client().stream(
             model=st.session_state["openai_model"],
             messages = st_messages_to_lc_messages(st.session_state.messages),
             stream=True
