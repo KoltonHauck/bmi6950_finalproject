@@ -5,3 +5,4 @@ langchain-community==0.0.18
 langchain-openai==0.0.5
 pypdf==4.0.1
 faiss-cpu==1.7.4
+sentence-transformers==2.3.1
