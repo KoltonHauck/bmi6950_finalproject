@@ -17,25 +17,30 @@ openai_api_key = st.sidebar.text_input('OpenAI API Key', type='password')
 def st_messages_to_lc_messages(st_messages):
     lc_messages = []
     for message in st_messages:
-        if message["role"] == "user":
-            lc_messages.append(
-                HumanMessage(content=message["content"])
-            )
-        elif message["role"] == "assistant":
-            lc_messages.append(
-                AIMessage(content=message["content"])
-            )
-        elif message["role"] == "system":
-            lc_messages.append(
-                SystemMessage(content=message["content"])
-            )
+        try:
+            if message["role"] == "user":
+                lc_messages.append(
+                    HumanMessage(content=message["content"])
+                )
+            elif message["role"] == "assistant":
+                lc_messages.append(
+                    AIMessage(content=message["content"])
+                )
+            elif message["role"] == "system":
+                lc_messages.append(
+                    SystemMessage(content=message["content"])
+                )
+        except:
+            print(f"Current message failed: {message}")
+            print(f"message history: {st_messages}")
     return lc_messages
 
 
 def get_client():
     client = ChatOpenAI(model_name="gpt-3.5-turbo",
                         temperature=1.0,
-                        openai_api_key=openai_api_key)
+                        openai_api_key=openai_api_key,
+                        stream=True)
     
     return client
 
