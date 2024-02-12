@@ -8,9 +8,7 @@ from langchain.prompts.chat import (
     SystemMessagePromptTemplate
 )
 
-#from langchain.callbacks.manager import CallbackManager
 from langchain_community.callbacks import StreamlitCallbackHandler
-#from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
@@ -38,11 +36,9 @@ def st_messages_to_lc_messages(st_messages):
 
 
 def get_client():
-    #callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
     client = ChatOpenAI(model_name="gpt-3.5-turbo",
                         temperature=1.0,
                         openai_api_key=openai_api_key,)
-                        #callback_manager=callback_manager)
     
     return client
 
@@ -66,18 +62,11 @@ if prompt := st.chat_input("What is up?"):
         if not openai_api_key.startswith('sk-'):
             st.warning('Please enter your OpenAI API key!', icon='⚠')
 
-        st_callback = StreamlitCallbackHandler(st.container())
-
         stream = get_client()(
             model=st.session_state["openai_model"],
             messages = st_messages_to_lc_messages(st.session_state.messages),
-            callbacks=[st_callback],
-            stream=True
         )    
         
-        #try:
-        st.write_stream(stream.content)
-        #except:
-        #    st.write(stream.content)
+        st.write(stream.content)
 
         st.session_state.messages.append({"role": "assistant", "content": stream.content})
