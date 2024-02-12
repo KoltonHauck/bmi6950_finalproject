@@ -71,7 +71,7 @@ if prompt := st.chat_input("What is up?"):
         stream = get_client().invoke(
             model=st.session_state["openai_model"],
             messages = st_messages_to_lc_messages(st.session_state.messages),
-            callbacks=[st_callback]
+            callbacks=[st_callback],
             stream=True
         )    
         
