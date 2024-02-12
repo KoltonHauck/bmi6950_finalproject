@@ -35,7 +35,7 @@ if prompt := st.chat_input("What is up?"):
             st.warning('Please enter your OpenAI API key!', icon='⚠')
 
         #stream = get_client().chat.completions.create(
-        stream = get_client().invoke(
+        stream = get_client()(
             model=st.session_state["openai_model"],
             messages=[
                 {"role": m["role"], "content": m["content"]}
