@@ -1,0 +1,65 @@
+### Patient Profile
+
+- **Name:** John Doe
+- **Age:** 52 years
+- **Sex:** Male
+- **Date of Birth:** 01/01/1971
+- **Medical Record Number:** 000123456
+
+### Chief Complaint
+
+- Patient reports experiencing chest pain on exertion, shortness of breath, and occasional palpitations for the past 3 months.
+
+### Medical History
+
+- **Hypertension:** Diagnosed 5 years ago, currently managed with medication.
+- **Type 2 Diabetes Mellitus:** Diagnosed 8 years ago, on oral hypoglycemics.
+- **Hyperlipidemia:** Diagnosed 2 years ago, on statin therapy.
+- **Family History:** Father had a myocardial infarction at age 55.
+
+### Social History
+
+- Smoker, 1 pack per day for 30 years.
+- Moderate alcohol intake.
+- Sedentary lifestyle.
+
+### Medications
+
+- Lisinopril 10 mg daily.
+- Metformin 500 mg twice daily.
+- Atorvastatin 20 mg at bedtime.
+
+### Allergies
+
+- No known drug allergies.
+
+### Physical Examination
+
+- **Vital Signs:** BP 142/88 mmHg, HR 78 bpm, RR 16/min, Temp 98.6°F (37°C).
+- **General Appearance:** No acute distress.
+- **Cardiovascular Examination:** Regular rhythm, no murmurs, rubs, or gallops. Mild bilateral lower extremity edema.
+- **Respiratory Examination:** Clear to auscultation bilaterally.
+- **Other Examinations:** Within normal limits.
+
+### Diagnostic Tests
+
+- **ECG:** Sinus rhythm, no ST segment or T wave changes.
+- **Echocardiogram:** Left ventricular hypertrophy, ejection fraction 55%.
+- **Blood Tests:**
+  - LDL cholesterol 130 mg/dL (high)
+  - HDL cholesterol 40 mg/dL (low)
+  - HbA1c 7.2% (indicating diabetes is not well controlled)
+  - Fasting blood glucose 180 mg/dL (high)
+
+### Assessment
+
+- Stable angina pectoris likely secondary to coronary artery disease.
+- Poorly controlled type 2 diabetes mellitus.
+- Hypertension.
+- Hyperlipidemia.
+
+### Plan
+
+- **Medications:** Increase atorvastatin to 40 mg at bedtime. Add aspirin 81 mg daily for cardiovascular protection. Consider initiation of a beta-blocker for angina and blood pressure control.
+- **Lifestyle Modifications:** Advise patient to quit smoking. Recommend dietary consultation for a heart-healthy diet. Encourage regular moderate exercise.
+- **Follow-Up:** Schedule a stress test to evaluate the extent of coronary artery disease. Follow up in 4 weeks to reassess symptoms and blood pressure control.
