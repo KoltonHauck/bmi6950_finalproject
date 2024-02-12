@@ -9,7 +9,7 @@ from langchain.prompts.chat import (
 )
 
 #from langchain.callbacks.manager import CallbackManager
-from langchain.callbacks import StreamlitCallBackHandler
+from langchain_community.callbacks import StreamlitCallBackHandler
 #from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
