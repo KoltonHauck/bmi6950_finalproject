@@ -31,8 +31,8 @@ def st_messages_to_lc_messages(st_messages):
                     SystemMessage(content=message["content"])
                 )
         except:
-            print(f"Current message failed: {message}")
-            print(f"message history: {st_messages}")
+            st.write(f"Current message failed: {message}")
+            st.write(f"message history: {st_messages}")
     return lc_messages
 
 
@@ -84,5 +84,5 @@ if prompt := st.chat_input("What is up?"):
         except:
             response = st.write(stream.content)
     st.session_state.messages.append({"role": "assistant", "content": response})
-    print("----- Message History -----")
-    print(st.session_state.messages)
+    st.write("----- Message History -----")
+    st.write(st.session_state.messages)
