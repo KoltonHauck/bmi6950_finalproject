@@ -1,12 +1,15 @@
 # https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps
 
 import streamlit as st
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
     SystemMessagePromptTemplate
 )
+
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
@@ -34,9 +37,11 @@ def st_messages_to_lc_messages(st_messages):
 
 
 def get_client():
+    callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
     client = ChatOpenAI(model_name="gpt-3.5-turbo",
                         temperature=1.0,
-                        openai_api_key=openai_api_key)
+                        openai_api_key=openai_api_key,
+                        callback_manager=callback_manager)
     
     return client
 
@@ -60,7 +65,7 @@ if prompt := st.chat_input("What is up?"):
         if not openai_api_key.startswith('sk-'):
             st.warning('Please enter your OpenAI API key!', icon='⚠')
 
-        stream = get_client().stream(
+        stream = get_client()(
             model=st.session_state["openai_model"],
             messages = st_messages_to_lc_messages(st.session_state.messages),
             stream=True
