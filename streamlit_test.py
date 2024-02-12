@@ -68,7 +68,7 @@ if prompt := st.chat_input("What is up?"):
 
         st_callback = StreamlitCallbackHandler(st.container())
 
-        stream = get_client().invoke(
+        stream = get_client()(
             model=st.session_state["openai_model"],
             messages = st_messages_to_lc_messages(st.session_state.messages),
             callbacks=[st_callback],
