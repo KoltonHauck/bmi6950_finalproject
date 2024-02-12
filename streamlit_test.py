@@ -1,19 +1,37 @@
-import streamlit as st
-from langchain.chat_models import ChatOpenAI
+# https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps
 
-st.title('🦜🔗 Quickstart App')
+from openai import OpenAI
+import streamlit as st
+
+st.title("ChatGPT-like clone")
 
 openai_api_key = st.sidebar.text_input('OpenAI API Key', type='password')
 
-def generate_response(input_text):
-    #llm = OpenAI(temperature=0.7, openai_api_key=openai_api_key)
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1.0, openai_api_key=openai_api_key)
-    st.info(llm.invoke(input_text).content)
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-with st.form('my_form'):
-    text = st.text_area('Enter text:', 'What are the three key pieces of advice for learning how to code?')
-    submitted = st.form_submit_button('Submit')
-    if not openai_api_key.startswith('sk-'):
-        st.warning('Please enter your OpenAI API key!', icon='⚠')
-    if submitted and openai_api_key.startswith('sk-'):
-        generate_response(text)
+if "openai_model" not in st.session_state:
+    st.session_state["openai_model"] = "gpt-3.5-turbo"
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+if prompt := st.chat_input("What is up?"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        stream = client.chat.completions.create(
+            model=st.session_state["openai_model"],
+            messages=[
+                {"role": m["role"], "content": m["content"]}
+                for m in st.session_state.messages
+            ],
+            stream=True,
+        )
+        response = st.write_stream(stream)
+    st.session_state.messages.append({"role": "assistant", "content": response})
