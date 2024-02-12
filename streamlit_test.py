@@ -84,8 +84,8 @@ if prompt := st.chat_input("What is up?"):
         except:
             response = st.write(stream.content)
 
-        st.write(f"response....{response}")
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.write(f"response....{stream.content}")
+        st.session_state.messages.append({"role": "assistant", "content": stream.content})
 
     st.write("----- Message History -----")
     st.write(st.session_state.messages)
