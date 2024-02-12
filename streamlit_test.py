@@ -39,8 +39,7 @@ def st_messages_to_lc_messages(st_messages):
 def get_client():
     client = ChatOpenAI(model_name="gpt-3.5-turbo",
                         temperature=1.0,
-                        openai_api_key=openai_api_key,
-                        stream=True)
+                        openai_api_key=openai_api_key)
     
     return client
 
@@ -76,7 +75,8 @@ if prompt := st.chat_input("What is up?"):
 
         stream = get_client()(
             model=st.session_state["openai_model"],
-            messages = st_messages_to_lc_messages(st.session_state.messages)
+            messages = st_messages_to_lc_messages(st.session_state.messages),
+            stream=True
         )    
         
         try:
