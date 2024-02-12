@@ -9,7 +9,7 @@ from langchain.prompts.chat import (
 )
 
 #from langchain.callbacks.manager import CallbackManager
-from langchain_community.callbacks import StreamlitCallBackHandler
+from langchain_community.callbacks import StreamlitCallbackHandler
 #from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
@@ -66,7 +66,7 @@ if prompt := st.chat_input("What is up?"):
         if not openai_api_key.startswith('sk-'):
             st.warning('Please enter your OpenAI API key!', icon='⚠')
 
-        st_callback = StreamlitCallBackHandler(st.container())
+        st_callback = StreamlitCallbackHandler(st.container())
 
         stream = get_client().invoke(
             model=st.session_state["openai_model"],
