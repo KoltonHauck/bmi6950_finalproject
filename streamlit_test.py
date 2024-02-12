@@ -1,13 +1,19 @@
 # https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps
 
-from openai import OpenAI
 import streamlit as st
+from langchain.chat_models import ChatOpenAI
 
 st.title("ChatGPT-like clone")
 
 openai_api_key = st.sidebar.text_input('OpenAI API Key', type='password')
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+def get_client():
+    client = ChatOpenAI(model_name="gpt-3.5-turbo",
+                        temperature=1.0,
+                        openai_api_key=openai_api_key)
+    
+    return client
+
 
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = "gpt-3.5-turbo"
@@ -25,6 +31,11 @@ if prompt := st.chat_input("What is up?"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
+        if not openai_api_key.startswith('sk-'):
+            st.warning('Please enter your OpenAI API key!', icon='⚠')
+
+        client = get_client()
+
         stream = client.chat.completions.create(
             model=st.session_state["openai_model"],
             messages=[
