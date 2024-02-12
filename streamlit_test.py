@@ -74,5 +74,8 @@ if prompt := st.chat_input("What is up?"):
             messages = st_messages_to_lc_messages(st.session_state.messages)
         )    
         
-        response = st.write_stream(stream.content)
+        try:
+            response = st.write_stream(stream.content)
+        except:
+            response = st.write(stream.content)
     st.session_state.messages.append({"role": "assistant", "content": response})
