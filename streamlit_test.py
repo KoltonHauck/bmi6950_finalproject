@@ -75,7 +75,7 @@ if prompt := st.chat_input("What is up?"):
 
         stream = get_client()(
             model=st.session_state["openai_model"],
-            messages = st_messages_to_lc_messages(st.session_state.messages[:-1]),
+            messages = st_messages_to_lc_messages(st.session_state.messages),
             stream=True
         )    
         
@@ -84,8 +84,8 @@ if prompt := st.chat_input("What is up?"):
         except:
             response = st.write(stream.content)
 
+        st.write(f"response....{response}")
         st.session_state.messages.append({"role": "assistant", "content": response})
 
-    st.write(f"response....{response}")
     st.write("----- Message History -----")
     st.write(st.session_state.messages)
