@@ -21,10 +21,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
-st.title("ChatGPT-like clone")
-
-openai_api_key = st.sidebar.text_input('OpenAI API Key', type='password')
-
 # convert st messages list to langchain message type
 def st_messages_to_lc_messages(st_messages):
     lc_messages = []
@@ -45,10 +41,10 @@ def st_messages_to_lc_messages(st_messages):
     return lc_messages
 
 # get openai chat client
-def get_client():
-    client = ChatOpenAI(model_name="gpt-3.5-turbo",
+def get_llm(model_selected="gpt-3.5-turbo"):
+    client = ChatOpenAI(model_name=model_selected,
                         temperature=1.0,
-                        openai_api_key=openai_api_key,)
+                        openai_api_key=openai_api_key)
     
     return client
 
@@ -70,32 +66,55 @@ def get_vdb_from_pdfs():
 
     return db.as_retriever(search_type="similarity", search_kwargs={"k":2})
 
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
+def clear_chat_history():
+    st.session_state.messages = [{"role": "assistant", "content": "How may I help you?"}]
+
+st.title("ChatGPT-like clone")
 
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [{"role": "assistant", "content": "How may I help you?"}]
+
+with st.sidebar:
+    openai_api_key = st.text_input('OpenAI API Key', type='password')
+    if not (openai_api_key.startswith("sk-") and len(openai_api_key)==51):
+        st.warning("Please enter your credentials!", icon="⚠")
+    else:
+        st.success("Proceed to entering your prompt message!", icon="👉")
+
+    st.subheader("Model Selection")
+    model_selected = st.sidebar.selectbox("Choose a Model:", ["gpt-3.5-turbo", "gpt-4-turbo-preview"])
+
+    st.subheader("VDB Selection")
+    db = st.sidebar.selectbox("Choose a VDB", [None, "pdf"])
+
+    st.button("Clear Chat History", on_click=clear_chat_history)
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("What is up?"):
+#if "openai_model" not in st.session_state:
+#    st.session_state["openai_model"] = "gpt-3.5-turbo"
+
+if prompt := st.chat_input("What is up?", disabled=not openai_api_key):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
+if st.session_state.messages[-1]["role"] == "user":
     with st.chat_message("assistant"):
-        if not openai_api_key.startswith('sk-'):
-            st.warning('Please enter your OpenAI API key!', icon='⚠')
+        #with st.spinner("Thinking..."):
+        #    response = generate_response()
 
-        qa = ConversationalRetrievalChain.from_llm(get_client(), get_vdb_from_pdfs())
-        stream = qa({"question": prompt, "chat_history": st.session_state.messages[:-1]})
+        #if not openai_api_key.startswith('sk-'):
+        #    st.warning('Please enter your OpenAI API key!', icon='⚠')
 
-        #stream = get_client()(
-        #    model=st.session_state["openai_model"],
-        #    messages = st_messages_to_lc_messages(st.session_state.messages),
-        #)    
+        #qa = ConversationalRetrievalChain.from_llm(get_client(), get_vdb_from_pdfs())
+        #stream = qa({"question": prompt, "chat_history": st.session_state.messages[:-1]})
+
+        stream = get_llm(model_selected)(
+            messages = st_messages_to_lc_messages(st.session_state.messages),
+        )    
         
         st.write(stream.content)
 
