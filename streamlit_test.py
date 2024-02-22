@@ -53,68 +53,9 @@ def get_llm():
     
     return client
 
-# load faiss db from pdf dir
-def get_vdb_from_pdfs():
-    loader = PyPDFDirectoryLoader("files/pdf/")
-    docs = loader.load()
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
-    texts = text_splitter.split_documents(docs)
-
-    embeddings = HuggingFaceEmbeddings(
-        model_name="thenlper/gte-large",
-        model_kwargs={"device": "cpu"},
-        encode_kwargs={"normalize_embeddings": True},
-    )
-
-    db = FAISS.from_documents(texts, embeddings)
-
-    return db.as_retriever(search_type="similarity", search_kwargs={"k":2})
-
 def initialize_messages():
-    st.session_state.messages = [{"role": "assistant", "content": "How may I help you?"}]
-
-def get_vdb():
-    st.text(f"entering get_vdb\npatient sel: {patient_selection}\nkb sel: {knowledge_base_selections}")
-    ### loaders ###
-    loaders = []
-    # patient list
-    if patient_selection:
-        st.text("entering patient sel")
-        #patient_path = os.path.join("files/patient/", patient_selection)
-        patient_path = f"files/patients/{patient_selection}/"
-        st.text(f"patient path: {patient_path}")
-        loaders.append(PyPDFDirectoryLoader(patient_path))
-    # knowledge bases
-    if knowledge_base_selections:
-        st.text("entering kb sel")
-        #kb_paths = [os.path.join("files/knowledge_bases/", kb) for kb in knowledge_base_selections]
-        kb_paths = [f"files/knowledge_bases/{kb}" for kb in knowledge_base_selections]
-        st.text(f"kb path: {kb_paths}")
-        loaders += [PyPDFDirectoryLoader(kb_path) for kb_path in kb_paths]
-
-    st.text(f"loaders length: {len(loaders)}")
-    st.text(loaders)
-    # if no loaders
-    if len(loaders) == 0:
-        st.text("\treturning None")
-        return None
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
-    embeddings = HuggingFaceEmbeddings(
-        model_name="thenlper/gte-large",
-        model_kwargs={"device": "cpu"},
-        encode_kwargs={"normalize_embeddings": True},
-    )
-
-    st.text("test 1")
-    index = VectorstoreIndexCreator(
-        vectorstore_cls=FAISS,
-        embedding=embeddings,
-        text_splitter=text_splitter
-    ).from_loaders(loaders)
-
-    return index #.as_retriever(search_type="similarity", search_kwargs={"k":2})
+    st.write("init messages")
+    st.session_state.messages = []
 
 def get_retrievers():
     retrievers = []
@@ -144,8 +85,8 @@ def get_retrievers():
         texts = [text for _ in texts_s for text in _]
         kb_db = FAISS.from_documents(texts, embeddings)
         retrievers.append({
-            "name": "Patient Chart",
-            "description": "Good for answering questions about patient-specific data",
+            "name": "Knowledge Base",
+            "description": "Cardiovascular guidelines",
             "retriever": kb_db.as_retriever()
         })
 
@@ -172,9 +113,14 @@ def get_knowledge_base_list(kb_path="files/knowledge_bases/"):
 
 st.title("ChatGPT-like clone")
 
-
 if "messages" not in st.session_state:
-    initialize_messages() 
+    st.write("messages not in st.session state")
+    initialize_messages()
+
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+        #chat_window.markdown(message["content"])
 
 with st.sidebar:
     ### openai api key ###
@@ -206,34 +152,22 @@ with st.sidebar:
     st.divider()
 
     ### clear chat history button ###
-    st.button("Clear Chat History", on_click=initialize_messages())
+    st.button("Clear Chat History", on_click=initialize_messages)
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-        #chat_window.markdown(message["content"])
+    st.divider()
 
 if prompt := st.chat_input("What is up?", disabled=not openai_api_key):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-if st.session_state.messages[-1]["role"] == "user":
+    #if st.session_state.messages[-1]["role"] == "user":
     with st.chat_message("assistant"):
-        #with st.spinner("Thinking..."):
-        #    response = generate_response()
-
-        #if not openai_api_key.startswith('sk-'):
-        #    st.warning('Please enter your OpenAI API key!', icon='⚠')
-
-        #qa = ConversationalRetrievalChain.from_llm(get_client(), get_vdb_from_pdfs())
-        #stream = qa({"question": prompt, "chat_history": st.session_state.messages[:-1]})
-
         llm = get_llm()
-        if st.session_state.retriever:
-            qa = MultiRetrievalQAChain(
+        if "retrievers" in st.session_state:
+            qa = MultiRetrievalQAChain.from_retrievers(
                 llm=llm,
-                retriever_infos=st.session_state.retriever
+                retriever_infos=st.session_state.retrievers
             )
             response = qa.invoke(st_messages_to_lc_messages(st.session_state.messages))
             stream = response["result"]
@@ -241,5 +175,6 @@ if st.session_state.messages[-1]["role"] == "user":
             response = llm.invoke(st_messages_to_lc_messages(st.session_state.messages))
             stream = response.content
         
-        st.write(stream)
+        st.markdown(stream)
         st.session_state.messages.append({"role": "assistant", "content": stream})
+
