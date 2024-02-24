@@ -87,7 +87,8 @@ def get_retrievers(patient_selection, kb, file_selection):
     
     return retrievers
 def set_retriever_session_state(patient_selection, kb, file_selection):
-    del st.session_state.retrievers
+    if "retrievers" in st.session_state:
+        del st.session_state.retrievers
     st.session_state["retrievers"] = get_retrievers(patient_selection, kb, file_selection)
 
 ### get the chat model ###
