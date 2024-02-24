@@ -86,6 +86,8 @@ def get_retrievers(patient_selection, kb, file_selection):
         return None
     
     return retrievers
+
+@st.cache(max_entries=1)
 def set_retriever_session_state(patient_selection, kb, file_selection):
     if "retrievers" in st.session_state:
         st.toast("del old retrievers")
