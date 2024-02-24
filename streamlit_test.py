@@ -1,15 +1,7 @@
-from langchain.callbacks.base import BaseCallbackHandler
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-
-from langchain.schema import ChatMessage
-from langchain_openai import ChatOpenAI
+import os
 import streamlit as st
 
 #from app_utils import *
-
-#/////////////////////////////////////////////
-import os
-import streamlit as st
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -17,6 +9,12 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader
 from langchain.chains import MultiRetrievalQAChain
 
+from langchain_openai import ChatOpenAI
+
+from langchain.callbacks.base import BaseCallbackHandler
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+
+from langchain.schema import ChatMessage
 from langchain_openai import ChatOpenAI
 
 ### helper functions to retrieving patient options and knowledge bases options ###
@@ -105,8 +103,6 @@ def get_llm(model_selected, openai_api_key):
                         callbacks=[stream_handler])
     
     return client
-
-#//////////////////////////////////////////////
 
 info = st.info("INFO: <- Open side bar to enter credentials <-".upper())
 
