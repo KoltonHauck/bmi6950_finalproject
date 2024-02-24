@@ -6,7 +6,7 @@ import streamlit as st
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader
+from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader, TextLoader
 from langchain.chains import MultiRetrievalQAChain
 
 from langchain_openai import ChatOpenAI
@@ -70,11 +70,19 @@ def get_retrievers(patient_selection, kb, file_selection):
         st.toast(f"{kb} retriever loaded")
     ### specific files from knowledge base ###
     elif kb and file_selection:
+        st.toast("test")
         st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/{file_selection}")
+        #kb_files_loaders = [TextLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
+        #kb_files_loaders = [PyPDFLoader(f"files/knowledge_bases/{kb}/{file}") if file.endswith(".pdf") else TextLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
         kb_files_loaders = [PyPDFLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
         documents_s = [kb_loader.load() for kb_loader in kb_files_loaders]
         texts_s = [text_splitter.split_documents(document) for document in documents_s]
         texts = [text for _ in texts_s for text in _]
+
+        #kb_loader = TextLoader(f"files/knowledge_bases/{kb}/{file_selection[0]}")
+        #documents = kb_loader.load()
+        #texts = text_splitter.split_documents(documents)
+
         kb_db = FAISS.from_documents(texts, embeddings)
         retrievers.append({
             "name": f"{kb} knowledge base",
