@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader, TextLoader
@@ -31,7 +31,7 @@ def get_retrievers(patient_selection, kb, file_selection):
     st.toast("retrieving retrievers...")
     retrievers = []
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
+    text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
 
     embeddings = HuggingFaceEmbeddings(
         model_name="thenlper/gte-large",
