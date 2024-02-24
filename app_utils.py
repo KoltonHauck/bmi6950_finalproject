@@ -20,7 +20,8 @@ def get_file_list(kb_path="files/knowledge_bases/", kb_selection="cardiovascular
         return "no knowledge base selected"
     
 ### retriever related functions ###
-def get_retrievers(patient_selection, knowledge_base_selections):
+def get_retrievers(patient_selection, kb, file_selection):
+    info.info("retrieving retrievers...")
     retrievers = []
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
@@ -31,6 +32,7 @@ def get_retrievers(patient_selection, knowledge_base_selections):
         encode_kwargs={"normalize_embeddings": True}
     )
 
+    ### patient was selected ###
     if patient_selection:
         patient_loader = PyPDFDirectoryLoader(f"files/patients/{patient_selection}/")
         documents = patient_loader.load()
@@ -41,15 +43,28 @@ def get_retrievers(patient_selection, knowledge_base_selections):
             "description": "Good for answering questions about patient-specific data",
             "retriever": pat_db.as_retriever()
         })
-    if knowledge_base_selections:
-        kb_loaders = [PyPDFDirectoryLoader(f"files/knowledge_bases/{kb}/") for kb in knowledge_base_selections]
-        documents_s = [kb_loader.load() for kb_loader in kb_loaders]
+
+    ### whole knowledge base ###
+    if kb and not file_selection:
+        kb_loader = PyPDFDirectoryLoader(f"files/patients/{kb}/")
+        documents = kb_loader.load()
+        texts = text_splitter.split_documents(documents)
+        kb_db = FAISS.from_documents(texts, embeddings)
+        retrievers.append({
+            "name": f"{kb} knowledge base",
+            "description": f"{kb} guidelines",
+            "retriever": kb_db.as_retriever()
+        })
+    ### specific files from knowledge base ###
+    else:
+        kb_files_loaders = [PyPDFDirectoryLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
+        documents_s = [kb_loader.load() for kb_loader in kb_files_loaders]
         texts_s = [text_splitter.split_documents(document) for document in documents_s]
         texts = [text for _ in texts_s for text in _]
         kb_db = FAISS.from_documents(texts, embeddings)
         retrievers.append({
-            "name": "Knowledge Base",
-            "description": "Cardiovascular guidelines",
+            "name": f"{kb} knowledge base",
+            "description": f"{kb} guidelines",
             "retriever": kb_db.as_retriever()
         })
 
@@ -57,11 +72,11 @@ def get_retrievers(patient_selection, knowledge_base_selections):
         return None
     
     return retrievers
-def set_retriever_session_state(patient_selection, knowledge_base_selections):
+def set_retriever_session_state(patient_selection, kb, file_selection):
     if "retriever" not in st.session_state:
-        st.session_state["retrievers"] = get_retrievers(patient_selection, knowledge_base_selections)
+        st.session_state["retrievers"] = get_retrievers(patient_selection, kb, file_selection)
     else:
-        st.session_state["retrievers"] = get_retrievers(patient_selection, knowledge_base_selections)
+        st.session_state["retrievers"] = get_retrievers(patient_selection, kb, file_selection)
 
 ### get the chat model ###
 def get_llm(model_selected, openai_api_key):
