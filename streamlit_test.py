@@ -87,12 +87,81 @@ def get_retrievers(patient_selection, kb, file_selection):
     
     return retrievers
 
+### function to get kb retriever for vdb ###
 @st.cache(max_entries=1)
+def get_kb_retriever(kb, file_selection):
+    text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
+
+    embeddings = HuggingFaceEmbeddings(
+        model_name="thenlper/gte-large",
+        model_kwargs={"device": "cpu"},
+        encode_kwargs={"normalize_embeddings": True}
+    )
+
+        ### whole knowledge base ###
+    if kb and not file_selection:
+        st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/*")
+        kb_loader = PyPDFDirectoryLoader(f"files/knowledge_bases/{kb}/")
+        documents = kb_loader.load()
+        texts = text_splitter.split_documents(documents)
+        kb_db = FAISS.from_documents(texts, embeddings)
+        return {
+            "name": f"{kb} knowledge base",
+            "description": f"{kb} guidelines",
+            "retriever": kb_db.as_retriever()
+        }
+    ### specific files from knowledge base ###
+    elif kb and file_selection:
+        st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/{file_selection}")
+        kb_files_loaders = [PyPDFLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
+        documents_s = [kb_loader.load() for kb_loader in kb_files_loaders]
+        texts_s = [text_splitter.split_documents(document) for document in documents_s]
+        texts = [text for _ in texts_s for text in _]
+
+        kb_db = FAISS.from_documents(texts, embeddings)
+        return {
+            "name": f"{kb} knowledge base",
+            "description": f"{kb} guidelines",
+            "retriever": kb_db.as_retriever()
+        }
+
+### function to get the patient retriever for vdb ###
+@st.cache(max_entries=1)
+def get_patient_retriever(patient_selection):
+    text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
+
+    embeddings = HuggingFaceEmbeddings(
+        model_name="thenlper/gte-large",
+        model_kwargs={"device": "cpu"},
+        encode_kwargs={"normalize_embeddings": True}
+    )
+
+    st.toast(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
+    patient_loader = PyPDFDirectoryLoader(f"files/patients/{patient_selection}/")
+    documents = patient_loader.load()
+    texts = text_splitter.split_documents(documents)
+    pat_db = FAISS.from_documents(texts, embeddings)
+    return {
+        "name": "Patient Chart",
+        "description": "Good for answering questions about patient-specific data",
+        "retriever": pat_db.as_retriever()
+    }
+
 def set_retriever_session_state(patient_selection, kb, file_selection):
-    if "retrievers" in st.session_state:
-        st.toast("del old retrievers")
-        del st.session_state.retrievers
-    st.session_state["retrievers"] = get_retrievers(patient_selection, kb, file_selection)
+    #if "retrievers" in st.session_state:
+    #    st.toast("del old retrievers")
+    #    del st.session_state.retrievers
+    #st.session_state["retrievers"] = get_retrievers(patient_selection, kb, file_selection)
+
+    retrievers = []
+    if patient_selection:
+        retrievers.append(get_patient_retriever(patient_selection))
+        st.toast("patient retriever loaded")
+    if kb:
+        retrievers.append(get_kb_retriever(kb, file_selection))
+        st.toast(f"{kb} retriever loaded")
+
+    return retrievers
 
 ### get the chat model ###
 def get_llm(model_selected, openai_api_key):
