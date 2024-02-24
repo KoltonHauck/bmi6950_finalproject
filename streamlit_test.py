@@ -1,8 +1,6 @@
 import os
 import streamlit as st
 
-#from app_utils import *
-
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -70,18 +68,11 @@ def get_retrievers(patient_selection, kb, file_selection):
         st.toast(f"{kb} retriever loaded")
     ### specific files from knowledge base ###
     elif kb and file_selection:
-        st.toast("test")
         st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/{file_selection}")
-        #kb_files_loaders = [TextLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
-        #kb_files_loaders = [PyPDFLoader(f"files/knowledge_bases/{kb}/{file}") if file.endswith(".pdf") else TextLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
         kb_files_loaders = [PyPDFLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
         documents_s = [kb_loader.load() for kb_loader in kb_files_loaders]
         texts_s = [text_splitter.split_documents(document) for document in documents_s]
         texts = [text for _ in texts_s for text in _]
-
-        #kb_loader = TextLoader(f"files/knowledge_bases/{kb}/{file_selection[0]}")
-        #documents = kb_loader.load()
-        #texts = text_splitter.split_documents(documents)
 
         kb_db = FAISS.from_documents(texts, embeddings)
         retrievers.append({
@@ -151,18 +142,15 @@ with st.sidebar:
     st.subheader("VDB Selections")
     patient_selection = st.selectbox("Select patient:", [None] + get_patient_list())
 
+    ### General KB selection ###
     knowledge_base_selection = st.selectbox("Select knowledge base:", [None] + get_knowledge_base_list())
 
+    ### Specific file selection ###
     file_selection = st.multiselect(
         "Select files to load",
         get_file_list(),
         disabled = not knowledge_base_selection
     )
-
-    #knowledge_base_selection = st.multiselect(
-    #    "Select knowledge bases",
-    #    get_knowledge_base_list()
-    #)
 
     #st.button("Create VDB", on_click=set_retriever_session_state()) #patient_selection, knowledge_base_selection))
     if st.button("Create VDB"):
@@ -212,15 +200,10 @@ if prompt := st.chat_input():
                 response = qa.invoke(st.session_state.messages)
                 st.session_state.messages.append(ChatMessage(role="assistant", content=response["result"]))
 
-                #st.rerun()
-                #stream = response["result"]
             else:
                 st.toast("prompting base model")
                 response = llm.invoke(st.session_state.messages)
                 stream = response.content
                 st.session_state.messages.append(ChatMessage(role="assistant", content=response.content))
 
-        st.rerun()
-
-        #update_info(" ".join([f"{message.role}: {message.content}//" for message in st.session_state.messages]))
-        #st.session_state.messages.append(ChatMessage(role="assistant", content=stream))
+        #st.rerun()
