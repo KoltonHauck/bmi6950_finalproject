@@ -87,10 +87,8 @@ def get_retrievers(patient_selection, kb, file_selection):
     
     return retrievers
 def set_retriever_session_state(patient_selection, kb, file_selection):
-    if "retriever" not in st.session_state:
-        st.session_state["retrievers"] = get_retrievers(patient_selection, kb, file_selection)
-    else:
-        st.session_state["retrievers"] = get_retrievers(patient_selection, kb, file_selection)
+    del st.session_state.retrievers
+    st.session_state["retrievers"] = get_retrievers(patient_selection, kb, file_selection)
 
 ### get the chat model ###
 def get_llm(model_selected, openai_api_key):
