@@ -30,7 +30,7 @@ def get_file_list(kb_path="files/knowledge_bases/", kb_selection="cardiovascular
     
 ### retriever related functions ###
 def get_retrievers(patient_selection, kb, file_selection):
-    update_info("retrieving retrievers...")
+    st.toast("retrieving retrievers...")
     retrievers = []
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
@@ -43,7 +43,7 @@ def get_retrievers(patient_selection, kb, file_selection):
 
     ### patient was selected ###
     if patient_selection:
-        update_info(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
+        st.toast(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
         patient_loader = PyPDFDirectoryLoader(f"files/patients/{patient_selection}/")
         documents = patient_loader.load()
         texts = text_splitter.split_documents(documents)
@@ -53,11 +53,11 @@ def get_retrievers(patient_selection, kb, file_selection):
             "description": "Good for answering questions about patient-specific data",
             "retriever": pat_db.as_retriever()
         })
-        update_info("patient retriever loaded")
+        st.toast("patient retriever loaded")
 
     ### whole knowledge base ###
     if kb and not file_selection:
-        update_info(f"getting {kb} retrievers from files/knowledge_bases/{kb}/*")
+        st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/*")
         kb_loader = PyPDFDirectoryLoader(f"files/knowledge_bases/{kb}/")
         documents = kb_loader.load()
         texts = text_splitter.split_documents(documents)
@@ -67,10 +67,10 @@ def get_retrievers(patient_selection, kb, file_selection):
             "description": f"{kb} guidelines",
             "retriever": kb_db.as_retriever()
         })
-        update_info(f"{kb} retriever loaded")
+        st.toast(f"{kb} retriever loaded")
     ### specific files from knowledge base ###
     elif kb and file_selection:
-        update_info(f"getting {kb} retrievers from files/knowledge_bases/{kb}/{file_selection}")
+        st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/{file_selection}")
         kb_files_loaders = [PyPDFLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
         documents_s = [kb_loader.load() for kb_loader in kb_files_loaders]
         texts_s = [text_splitter.split_documents(document) for document in documents_s]
@@ -81,7 +81,7 @@ def get_retrievers(patient_selection, kb, file_selection):
             "description": f"{kb} guidelines",
             "retriever": kb_db.as_retriever()
         })
-        update_info(f"{kb} retriever loaded")
+        st.toast(f"{kb} retriever loaded")
 
     if len(retrievers) == 0:
         return None
@@ -103,12 +103,6 @@ def get_llm(model_selected, openai_api_key):
                         callbacks=[stream_handler])
     
     return client
-
-info = st.info("INFO: <- Open side bar to enter credentials <-".upper())
-
-### update info text box ###
-def update_info(new_info):
-    info.info("INFO: " + new_info.upper())
 
 ### class to handle streaming chat output to streamlit app
 class StreamHandler(BaseCallbackHandler):
@@ -135,7 +129,6 @@ with st.sidebar:
     if not (openai_api_key.startswith("sk-") and len(openai_api_key)==51):
         st.warning("Please enter your credentials!", icon="⚠")
     else:
-        update_info("key entered, proceed to prompting!")
         st.success("Proceed to entering your prompt message!", icon="👉")
 
     st.divider()
@@ -166,9 +159,9 @@ with st.sidebar:
     #st.button("Create VDB", on_click=set_retriever_session_state()) #patient_selection, knowledge_base_selection))
     if st.button("Create VDB"):
         st.session_state["info"] = "test"
-        update_info("creating vdb...")
+        st.toast("creating vdb...")
         set_retriever_session_state(patient_selection, knowledge_base_selection, file_selection)
-        update_info("created vdb")
+        st.toast("created vdb")
 
     st.divider()
 
@@ -182,6 +175,10 @@ if "messages" not in st.session_state:
 ### write messages ###
 for msg in st.session_state.messages:
     st.chat_message(msg.role).write(msg.content)
+
+### suggestion to enter api key
+if not openai_api_key:
+    st.toast("<- Open side bar to enter credentials <-")
 
 ### chat input ###
 if prompt := st.chat_input():
@@ -197,7 +194,7 @@ if prompt := st.chat_input():
 
         with st.spinner():
             if st.session_state.get("retrievers", None):
-                update_info("prompting multiretrievalqachain")
+                st.toast("prompting multiretrievalqachain")
                 qa = MultiRetrievalQAChain.from_retrievers(
                     llm=llm,
                     retriever_infos=st.session_state.retrievers,
@@ -210,7 +207,7 @@ if prompt := st.chat_input():
                 #st.rerun()
                 #stream = response["result"]
             else:
-                update_info("prompting base model")
+                st.toast("prompting base model")
                 response = llm.invoke(st.session_state.messages)
                 stream = response.content
                 st.session_state.messages.append(ChatMessage(role="assistant", content=response.content))
