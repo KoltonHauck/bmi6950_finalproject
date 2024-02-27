@@ -88,7 +88,7 @@ def get_retrievers(patient_selection, kb, file_selection):
     return retrievers
 
 ### function to get kb retriever for vdb ###
-@st.cache(max_entries=1)
+@st.cache_resource
 def get_kb_retriever(kb, file_selection):
     text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
 
@@ -126,7 +126,7 @@ def get_kb_retriever(kb, file_selection):
         }
 
 ### function to get the patient retriever for vdb ###
-@st.cache(max_entries=1)
+@st.cache_resource
 def get_patient_retriever(patient_selection):
     text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
 
@@ -161,7 +161,10 @@ def set_retriever_session_state(patient_selection, kb, file_selection):
         retrievers.append(get_kb_retriever(kb, file_selection))
         st.toast(f"{kb} retriever loaded")
 
-    return retrievers
+    if not kb and not patient_selection:
+        retrievers = None
+
+    st.session_state["retrievers"] = retrievers
 
 ### get the chat model ###
 def get_llm(model_selected, openai_api_key):
@@ -248,7 +251,7 @@ if not openai_api_key:
     st.toast("<- Open side bar to enter credentials <-")
 
 ### chat input ###
-if prompt := st.chat_input():
+if prompt := st.chat_input(disabled= not openai_api_key):
     st.session_state.messages.append(ChatMessage(role="user", content=prompt))
     st.chat_message("user").write(prompt)
 
@@ -264,9 +267,7 @@ if prompt := st.chat_input():
                 st.toast("prompting multiretrievalqachain")
                 qa = MultiRetrievalQAChain.from_retrievers(
                     llm=llm,
-                    retriever_infos=st.session_state.retrievers,
-                    callbacks=[]
-                )
+                    retriever_infos=st.session_state["retrievers"])
                 
                 response = qa.invoke(st.session_state.messages)
                 st.session_state.messages.append(ChatMessage(role="assistant", content=response["result"]))
@@ -277,4 +278,4 @@ if prompt := st.chat_input():
                 stream = response.content
                 st.session_state.messages.append(ChatMessage(role="assistant", content=response.content))
 
-        #st.rerun()
+        st.rerun()
