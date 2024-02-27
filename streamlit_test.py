@@ -101,11 +101,11 @@ def get_huggingface_embeddings():
 def get_kb_retriever(kb, file_selection):
     text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
 
-    embeddings = HuggingFaceEmbeddings(
-        model_name="thenlper/gte-large",
-        model_kwargs={"device": "cpu"},
-        encode_kwargs={"normalize_embeddings": True}
-    )
+    #embeddings = HuggingFaceEmbeddings(
+    #    model_name="thenlper/gte-large",
+    #    model_kwargs={"device": "cpu"},
+    #    encode_kwargs={"normalize_embeddings": True}
+    #)
 
         ### whole knowledge base ###
     if kb and not file_selection:
@@ -127,7 +127,7 @@ def get_kb_retriever(kb, file_selection):
         texts_s = [text_splitter.split_documents(document) for document in documents_s]
         texts = [text for _ in texts_s for text in _]
 
-        kb_db = FAISS.from_documents(texts, embeddings)
+        kb_db = FAISS.from_documents(texts, get_huggingface_embeddings())
         return {
             "name": f"{kb} knowledge base",
             "description": f"{kb} guidelines",
@@ -139,13 +139,13 @@ def get_kb_retriever(kb, file_selection):
 def get_patient_retriever(patient_selection):
     text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64) f
 
-    embeddings = HuggingFaceEmbeddings(
-        model_name="thenlper/gte-large",
-        model_kwargs={"device": "cpu"},
-        encode_kwargs={"normalize_embeddings": True}
-    )
+    #embeddings = HuggingFaceEmbeddings(
+    #    model_name="thenlper/gte-large",
+    #    model_kwargs={"device": "cpu"},
+    #    encode_kwargs={"normalize_embeddings": True}
+    #)
 
-    #st.toast(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
+    st.toast(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
     patient_loader = PyPDFDirectoryLoader(f"files/patients/{patient_selection}/")
     documents = patient_loader.load()
     texts = text_splitter.split_documents(documents)
