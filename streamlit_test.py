@@ -109,7 +109,7 @@ def get_kb_retriever(kb, file_selection):
 
         ### whole knowledge base ###
     if kb and not file_selection:
-        st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/*")
+        #st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/*")
         kb_loader = PyPDFDirectoryLoader(f"files/knowledge_bases/{kb}/")
         documents = kb_loader.load()
         texts = text_splitter.split_documents(documents)
@@ -121,7 +121,7 @@ def get_kb_retriever(kb, file_selection):
         }
     ### specific files from knowledge base ###
     elif kb and file_selection:
-        st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/{file_selection}")
+        #st.toast(f"getting {kb} retrievers from files/knowledge_bases/{kb}/{file_selection}")
         kb_files_loaders = [PyPDFLoader(f"files/knowledge_bases/{kb}/{file}") for file in file_selection]
         documents_s = [kb_loader.load() for kb_loader in kb_files_loaders]
         texts_s = [text_splitter.split_documents(document) for document in documents_s]
@@ -145,7 +145,7 @@ def get_patient_retriever(patient_selection):
     #    encode_kwargs={"normalize_embeddings": True}
     #)
 
-    st.toast(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
+    #st.toast(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
     patient_loader = PyPDFDirectoryLoader(f"files/patients/{patient_selection}/")
     documents = patient_loader.load()
     texts = text_splitter.split_documents(documents)
