@@ -87,6 +87,15 @@ def get_retrievers(patient_selection, kb, file_selection):
     
     return retrievers
 
+@st.cache_resource
+def get_huggingface_embeddings():
+    embeddings = HuggingFaceEmbeddings(
+        model_name="thenlper/gte-large",
+        model_kwargs={"device": "cpu"},
+        encode_kwargs={"normalize_embeddings": True}
+    )
+    return embeddings
+
 ### function to get kb retriever for vdb ###
 @st.cache_resource
 def get_kb_retriever(kb, file_selection):
@@ -104,7 +113,7 @@ def get_kb_retriever(kb, file_selection):
         kb_loader = PyPDFDirectoryLoader(f"files/knowledge_bases/{kb}/")
         documents = kb_loader.load()
         texts = text_splitter.split_documents(documents)
-        kb_db = FAISS.from_documents(texts, embeddings)
+        kb_db = FAISS.from_documents(texts, get_huggingface_embeddings())
         return {
             "name": f"{kb} knowledge base",
             "description": f"{kb} guidelines",
@@ -128,7 +137,7 @@ def get_kb_retriever(kb, file_selection):
 ### function to get the patient retriever for vdb ###
 @st.cache_resource
 def get_patient_retriever(patient_selection):
-    text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
+    text_splitter = CharacterTextSplitter() #RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=64) f
 
     embeddings = HuggingFaceEmbeddings(
         model_name="thenlper/gte-large",
@@ -136,11 +145,11 @@ def get_patient_retriever(patient_selection):
         encode_kwargs={"normalize_embeddings": True}
     )
 
-    st.toast(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
+    #st.toast(f"getting {patient_selection} retrievers from files/patients/{patient_selection}/")
     patient_loader = PyPDFDirectoryLoader(f"files/patients/{patient_selection}/")
     documents = patient_loader.load()
     texts = text_splitter.split_documents(documents)
-    pat_db = FAISS.from_documents(texts, embeddings)
+    pat_db = FAISS.from_documents(texts, get_huggingface_embeddings())
     return {
         "name": "Patient Chart",
         "description": "Good for answering questions about patient-specific data",
