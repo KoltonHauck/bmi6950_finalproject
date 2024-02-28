@@ -120,21 +120,69 @@ P2Y12 Inhibitors: In addition to aspirin, a loading dose of a P2Y12 inhibitor is
 #### GPT-4-Turbo-Preview - Yes Knowledge base
 > For a patient with STEMI, adjunctive pharmacotherapy plays a critical role in the management plan alongside the primary reperfusion therapy. Here is how you would implement adjunctive pharmacotherapy based on the provided guidelines:
 > 1.	Antiplatelets:
-> o	Aspirin: Administer aspirin immediately as part of the initial treatment. Aspirin acts by inhibiting platelet aggregation, thus preventing further clot formation. The recommended dose for STEMI is a chewable 162-325 mg tablet given as soon as possible after symptom onset.
-> o	P2Y12 inhibitors: Following aspirin administration, add a P2Y12 inhibitor. The choice of P2Y12 inhibitor (e.g., clopidogrel, ticagrelor, or prasugrel) can depend on the patient's specific situation, including whether they are expected to undergo PCI and their risk of bleeding. These agents further prevent platelet aggregation.
+> * Aspirin: Administer aspirin immediately as part of the initial treatment. Aspirin acts by inhibiting platelet aggregation, thus preventing further clot formation. The recommended dose for STEMI is a chewable 162-325 mg tablet given as soon as possible after symptom onset.
+> * P2Y12 inhibitors: Following aspirin administration, add a P2Y12 inhibitor. The choice of P2Y12 inhibitor (e.g., clopidogrel, ticagrelor, or prasugrel) can depend on the patient's specific situation, including whether they are expected to undergo PCI and their risk of bleeding. These agents further prevent platelet aggregation.
 > 2.	Anticoagulants:
-> o	Depending on whether the patient is undergoing PCI, choose between unfractionated heparin (UFH), enoxaparin, or bivalirudin. These agents prevent the formation and growth of thrombi by inhibiting factors in the coagulation cascade.
-> o	The choice and duration of anticoagulant therapy may vary based on the patient's risk profile and whether PCI is performed.
+> * Depending on whether the patient is undergoing PCI, choose between unfractionated heparin (UFH), enoxaparin, or bivalirudin. These agents prevent the formation and growth of thrombi by inhibiting factors in the coagulation cascade.
+> * The choice and duration of anticoagulant therapy may vary based on the patient's risk profile and whether PCI is performed.
 > 3.	Beta-blockers:
-> o	Early administration of beta-blockers is recommended unless contraindicated, such as in patients with heart failure or a low output state. Beta-blockers reduce myocardial oxygen demand by lowering heart rate and blood pressure, thus aiding in the management of STEMI.
+> * Early administration of beta-blockers is recommended unless contraindicated, such as in patients with heart failure or a low output state. Beta-blockers reduce myocardial oxygen demand by lowering heart rate and blood pressure, thus aiding in the management of STEMI.
 > 4.	ACE Inhibitors:
-> o	Initiate ACE inhibitors within the first 24 hours for patients with left ventricular (LV) dysfunction, hypertension, or diabetes. ACE inhibitors help in reducing the workload on the heart by lowering blood pressure and have a protective effect on the heart muscle.
+> * Initiate ACE inhibitors within the first 24 hours for patients with left ventricular (LV) dysfunction, hypertension, or diabetes. ACE inhibitors help in reducing the workload on the heart by lowering blood pressure and have a protective effect on the heart muscle.
 > 5.	Statins:
-> o	Start high-intensity statin therapy as soon as possible. Statins are crucial for managing cholesterol levels and stabilizing plaque, which can help prevent further cardiovascular events.
+> * Start high-intensity statin therapy as soon as possible. Statins are crucial for managing cholesterol levels and stabilizing plaque, which can help prevent further cardiovascular events.
 > When implementing this pharmacotherapy plan, always consider the patient's history and current clinical status to address any contraindications for each therapy. For instance, patients with a history of severe asthma or reactive airway disease may have contraindications to beta-blockers, and those with a history of severe renal impairment may not be suitable for certain doses or types of anticoagulants. Patient-specific factors such as history of hypertension, hyperlipidemia, diabetes, and previous cardiovascular events should also guide therapy adjustments.
 
 
 ### Prompt 2 (with patient data): "What treatments should I give this patient?"
+
+#### GPT-3.5-Turbo - No Knowledge base
+> Based on the provided information, the patient John Doe is presenting with a STEMI (ST-segment elevation myocardial infarction). The treatment for STEMI includes immediate reperfusion therapy, which can be achieved through either primary percutaneous coronary intervention (PCI) or fibrinolytic therapy. In addition to reperfusion therapy, other treatments for this patient may include:
+> 1.	Aspirin: Immediate administration of aspirin to reduce platelet aggregation.
+> 2.	P2Y12 Inhibitor (e.g., Clopidogrel, Ticagrelor, Prasugrel): To prevent further platelet activation and aggregation.
+> 3.	Anticoagulant therapy (e.g., Heparin, Enoxaparin): To prevent clot formation.
+> 4.	Beta-blockers: To reduce heart rate, blood pressure, and myocardial oxygen demand.
+> 5.	ACE Inhibitors or ARBs: To improve outcomes and reduce mortality in patients with left ventricular dysfunction.
+> 6.	Statin therapy: To manage hyperlipidemia and reduce the risk of future cardiovascular events.
+> 7.	Glycemic control: Management of hyperglycemia in patients with diabetes mellitus.
+> 8.	Oxygen therapy if oxygen saturation is low.
+> Please note that the specific treatment plan and dosages should be determined by a healthcare professional based on the patient's individual clinical condition and any contraindications.
+
+#### GPT-3.5-Turbo - Yes Knowledge base
+> Based on the provided information, the patient John Doe is presenting with a STEMI (ST-segment elevation myocardial infarction). The appropriate treatments for this patient would include:
+> 1.	Immediate reperfusion therapy: This can be achieved through either primary percutaneous coronary intervention (PCI) or fibrinolytic therapy, depending on the availability and timing of PCI facilities.
+> 2.	Antiplatelet therapy: Administer aspirin and P2Y12 inhibitor (such as clopidogrel, ticagrelor, or prasugrel) to prevent further clot formation.
+> 3.	Anticoagulant therapy: Use heparin or bivalirudin to prevent clot formation and extension.
+> 4.	Beta-blockers: Initiate beta-blocker therapy to reduce heart rate, blood pressure, and myocardial oxygen demand.
+> 5.	ACE inhibitors or ARBs: Start ACE inhibitors or ARBs to improve outcomes and reduce mortality in patients with left ventricular dysfunction post-MI.
+> 6.	Statin therapy: Prescribe high-intensity statin therapy to lower LDL cholesterol levels and reduce the risk of future cardiovascular events.
+> 7.	Blood sugar management: Control hyperglycemia with insulin therapy to optimize outcomes post-MI.
+> 8.	Lifestyle modifications: Encourage smoking cessation, healthy diet, regular exercise, and weight management to improve overall cardiovascular health.
+> It is crucial to individualize treatment based on the patient's specific clinical status and any contraindications. Consulting with a cardiologist or specialist is recommended for the optimal management of this patient.
+
+#### GPT-4-Turbo-Preview - No Knowledge base  ** GPT-4-Turbo-Preview giving short responses - think it might have been going through an update **
+> Based on the patient's symptoms and medical history, it would be best to start with a thorough physical examination and possibly some diagnostic tests to determine the underlying cause of their condition. Depending on the results, treatment options could include medication, physical therapy, surgery, or other interventions. It's important to consult with a healthcare professional for personalized recommendations.
+
+#### GPT-4-Turbo-Preview - Yes Knowledge base ** GPT-4-Turbo-Preview giving short responses - think it might have been going through an update **
+Tried a different prompt to prompt correctly: "Based on the guidelines, what treatments should I give this patient?"
+
+> To recommend specific treatments based on the guidelines provided, I would need more details about the patient's current clinical status, including the time since symptom onset, ECG findings confirming STEMI, and any contraindications for therapies based on the patient's history and current clinical status. However, based on the general guidelines for STEMI management provided:
+> 1.	Confirm STEMI Diagnosis: Ensure diagnosis via ECG showing ST-segment elevation.
+> 2.	Initial Assessment: Determine the time since symptom onset to decide on the appropriate reperfusion strategy.
+> 3.	Reperfusion Therapy:
+> *	Primary PCI (Percutaneous Coronary Intervention): This is recommended if the symptom onset is within 12 hours and PCI can be performed within 90 minutes of first medical contact.
+> * Fibrinolytic Therapy: Consider this if PCI is not available within 120 minutes and there are no contraindications, especially if within 12 hours of symptom onset.
+> 4.	Adjunctive Pharmacotherapy:
+> * Antiplatelets: Administer aspirin immediately, followed by a P2Y12 inhibitor.
+> * Anticoagulants: Choose between unfractionated heparin (UFH), enoxaparin, or bivalirudin, especially if undergoing PCI.
+> * Beta-blockers: Administer early unless contraindicated (e.g., heart failure, low output state).
+> * ACE Inhibitors: Initiate within 24 hours for patients with LV dysfunction, hypertension, or diabetes.
+> * Statins: Start high-intensity statin therapy as soon as possible.
+> 5.	Risk Stratification: Use clinical findings, ECG, and echocardiography to assess risk and guide further therapy.
+> 6.	Special Considerations: Always consider contraindications for each therapy based on patient history and current clinical status. Also, take into account patient-specific factors such as history of hypertension, hyperlipidemia, diabetes, and previous cardiovascular events.
+> Without specific patient details, these are the general guidelines to follow for STEMI management.
+
+It seems like the model didn't access the patient chart either based on that last line.
 
 ## Opportunities for Improvement
 
