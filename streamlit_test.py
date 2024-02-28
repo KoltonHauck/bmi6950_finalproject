@@ -211,6 +211,7 @@ with st.sidebar:
     if not (openai_api_key.startswith("sk-") and len(openai_api_key)==51):
         st.warning("Please enter your credentials!", icon="⚠")
     else:
+        OPENAI_API_KEY = openai_api_key
         st.success("Proceed to entering your prompt message!", icon="👉")
 
     st.divider()
