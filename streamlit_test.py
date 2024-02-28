@@ -269,13 +269,13 @@ if prompt := st.chat_input(disabled= not openai_api_key):
         st.stop()
 
     with st.chat_message("assistant"):
-        llm = get_llm(openai_api_key=openai_api_key, model_selected=model_selected)
+        #llm = get_llm(openai_api_key=openai_api_key, model_selected=model_selected)
 
         with st.spinner():
             if st.session_state.get("retrievers", None):
                 st.toast("prompting multiretrievalqachain")
                 qa = MultiRetrievalQAChain.from_retrievers(
-                    llm=llm,
+                    llm=get_llm(openai_api_key=openai_api_key, model_selected=model_selected),
                     retriever_infos=st.session_state["retrievers"])
                 
                 response = qa.invoke(st.session_state.messages)
@@ -283,7 +283,7 @@ if prompt := st.chat_input(disabled= not openai_api_key):
 
             else:
                 st.toast("prompting base model")
-                response = llm.invoke(st.session_state.messages)
+                response = get_llm(openai_api_key=openai_api_key, model_selected=model_selected).invoke(st.session_state.messages)
                 stream = response.content
                 st.session_state.messages.append(ChatMessage(role="assistant", content=response.content))
 
