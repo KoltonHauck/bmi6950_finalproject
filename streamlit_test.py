@@ -176,11 +176,11 @@ def set_retriever_session_state(patient_selection, kb, file_selection):
     st.session_state["retrievers"] = retrievers
 
 ### get the chat model ###
-def get_llm(model_selected, openai_api_key):
+def get_llm(model_selected):
     stream_handler = StreamHandler(st.empty())
     client = ChatOpenAI(model_name=model_selected,
                         temperature=0.5,
-                        openai_api_key=openai_api_key,
+                        openai_api_key=os.environ.get("OPENAI_API_KEY"),
                         streaming=False,
                         callbacks=[stream_handler])
     
@@ -211,7 +211,7 @@ with st.sidebar:
     if not (openai_api_key.startswith("sk-") and len(openai_api_key)==51):
         st.warning("Please enter your credentials!", icon="⚠")
     else:
-        OPENAI_API_KEY = openai_api_key
+        os.environ["OPENAI_API_KEY"] = openai_api_key
         st.success("Proceed to entering your prompt message!", icon="👉")
 
     st.divider()
@@ -276,7 +276,7 @@ if prompt := st.chat_input(disabled= not openai_api_key):
             if st.session_state.get("retrievers", None):
                 st.toast("prompting multiretrievalqachain")
                 qa = MultiRetrievalQAChain.from_retrievers(
-                    llm=get_llm(openai_api_key=openai_api_key, model_selected=model_selected),
+                    llm=get_llm(model_selected=model_selected),
                     retriever_infos=st.session_state["retrievers"])
                 
                 response = qa.invoke(st.session_state.messages)
@@ -284,7 +284,7 @@ if prompt := st.chat_input(disabled= not openai_api_key):
 
             else:
                 st.toast("prompting base model")
-                response = get_llm(openai_api_key=openai_api_key, model_selected=model_selected).invoke(st.session_state.messages)
+                response = get_llm(model_selected=model_selected).invoke(st.session_state.messages)
                 stream = response.content
                 st.session_state.messages.append(ChatMessage(role="assistant", content=response.content))
 
